@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+
+import argparse
+import subprocess
+import sys
+import re
+
+parser = argparse.ArgumentParser(description = "Update the project version")
+auxparser = parser.add_subparsers(dest = "command", required = False)
+
+major = auxparser.add_parser("major",
+    help = "Bump the major version"
+)
+
+minor = auxparser.add_parser("minor",
+    help = "Bump minor version"
+)
+
+patch = auxparser.add_parser("patch",
+    help = "Bump patch version"
+)
+
+prerelease = auxparser.add_parser("prerelease",
+    help = "Bump prerelase version"
+)
+
+prerelease.add_argument("label",
+    help = "The prerelease label to introduce",
+    nargs = "?"
+)
+
+args = parser.parse_args()
+output = subprocess.run([ "git", "describe", "--tag", "--always", "--abbrev=0" ], capture_output = True, text = True)
+
+if output.returncode:
+    sys.exit(f"\x1b[41;37m ERROR \x1b[0m Failure fetching the current version: {output.stderr}")
+
+if not args.command:
+    print(output.stdout[:-1])
+    sys.exit(0)
+
+version_match = re.search(r"^v([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([a-zA-Z]+)\.([0-9]+))?$", output.stdout[:-1])
+if not version_match:
+    sys.exit(f"\x1b[41;37m ERROR \x1b[0m Invalid version format: '{output.stdout}'. Expected 'v<number>.<number>.<number>' or 'v<number>.<number>.<number>-<label>.<number>'")
+
+output = version_match
+
+current_version = {
+    "major": int(output.group(1)),
+    "minor": int(output.group(2)),
+    "patch": int(output.group(3)),
+    "prerelease": { "label": output.group(4), "version": int(output.group(5)) }
+}
+
+match args.command:
+    case "major":
+        current_version["major"] += 1
+        current_version["minor"] = 0
+        current_version["patch"] = 0
+        current_version["prerelease"] = None
+    case "minor":
+        current_version["minor"] += 1
+        current_version["patch"] = 0
+        current_version["prerelease"] = None
+    case "patch":
+        current_version["patch"] += 1
+        current_version["prerelease"] = None
+    case "prerelease":
+        if args.label:
+            current_version["prerelease"]["label"] = args.label
+            current_version["prerelease"]["version"] = 1
+        else:
+            current_version["prerelease"]["version"] += 1
+
+if current_version["prerelease"]:
+    prerelease = f"-{current_version["prerelease"]["label"]}.{current_version["prerelease"]["version"]}"
+else:
+    prerelease = ""
+
+current_version = f"v{current_version["major"]}.{current_version["minor"]}.{current_version["patch"]}{prerelease}"
+
+operation = subprocess.run([ "git", "tag", current_version ], capture_output = True)
+
+if operation.returncode:
+    sys.exit(f"\x1b[41;37m ERROR \x1b[0m Failed to update project {args.command} version: {operation.stderr}")
+else:
+    print(f"\x1b[43m SUCCESS \x1b[0m Successfully updated project {args.command} version")

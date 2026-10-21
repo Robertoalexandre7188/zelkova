@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.31)
 
 execute_process(
-	COMMAND git describe --tags --always --dirty
+	COMMAND git describe --tags --always --abbrev=0
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	OUTPUT_VARIABLE PROJECT_FULL_VERSION
 	OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -25,7 +25,7 @@ else()
 	message(FATAL_ERROR "Could not fetch project version")
 endif()
 
-####
+#############################################################################################################
 
 project(zelkova
 	LANGUAGES C
@@ -33,9 +33,23 @@ project(zelkova
 	DESCRIPTION "A lightweight build system focused on integration with C and native dependency manageament"
 )
 
+include(GNUInstallDirs)
+
 add_compile_definitions(
 	MAJOR="${PROJECT_MAJOR_VERSION}"
 	MINOR="${PROJECT_MINOR_VERSION}"
 	PATCH="${PROJECT_PATCH_VERSION}"
 	IS_PRERELEASE="${IS_PRERELEASE}"
+)
+
+if(IS_PRERELEASE)
+	add_compile_definitions(PRERELEASE_VERSION="${PROJECT_PRERELEASE_VERSION}")
+endif()
+
+add_executable(${PROJECT_NAME}
+	src/main.c
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_BINDIR}
 )
