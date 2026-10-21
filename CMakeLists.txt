@@ -1,0 +1,41 @@
+cmake_minimum_required(VERSION 3.31)
+
+execute_process(
+	COMMAND git describe --tags --always --dirty
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	OUTPUT_VARIABLE PROJECT_FULL_VERSION
+	OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+#### Automatic project version detection based on the latest git tag
+
+if(PROJECT_FULL_VERSION MATCHES "^v([0-9]+)\\.([0-9]+)\\.([0-9]+)(-([a-zA-Z]+)\\.([0-9]+))?")
+	set(PROJECT_MAJOR_VERSION "${CMAKE_MATCH_1}")
+	set(PROJECT_MINOR_VERSION "${CMAKE_MATCH_2}")
+	set(PROJECT_PATCH_VERSION "${CMAKE_MATCH_3}")
+	set(PROJECT_PRERELEASE "${CMAKE_MATCH_4}")
+	set(PROJECT_PRERELEASE_VERSION "${CMAKE_MATCH_5}")
+
+	if(PROJECT_PRERELEASE)
+		set(IS_PRERELEASE 1)
+	else()
+		set(IS_PRERELEASE 0)
+	endif()
+else()
+	message(FATAL_ERROR "Could not fetch project version")
+endif()
+
+####
+
+project(zelkova
+	LANGUAGES C
+	VERSION "${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}.${PROJECT_PATCH_VERSION}"
+	DESCRIPTION "A lightweight build system focused on integration with C and native dependency manageament"
+)
+
+add_compile_definitions(
+	MAJOR="${PROJECT_MAJOR_VERSION}"
+	MINOR="${PROJECT_MINOR_VERSION}"
+	PATCH="${PROJECT_PATCH_VERSION}"
+	IS_PRERELEASE="${IS_PRERELEASE}"
+)
