@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+
+import argparse
+import subprocess
+import os, sys
+
+parser = argparse.ArgumentParser(description = "Execute a compiled program", formatter_class = argparse.MetavarTypeHelpFormatter)
+group = parser.add_mutually_exclusive_group(required = False)
+
+group.add_argument("--release", "-r",
+    help = "Execute the release version, if it exists",
+    action = "store_true"
+)
+
+group.add_argument("--min-size", "-m",
+    help = "Execute the minimal size version, if it exists",
+    action = "store_true"
+)
+
+group.add_argument("--dsym", "-d",
+    help = "Execute the release with debug symbols version, if it exists",
+    action = "store_true"
+)
+
+parser.add_argument("executable",
+    type = str,
+    metavar = "executable",
+    help = "The executable to run"
+)
+
+parser.add_argument("exec_args",
+    type = str,
+    nargs = "*",
+    help = "The arguments to forward to the executable"
+)
+
+args = parser.parse_args()
+
+mode = "Debug"
+if args.release:
+    mode = "Release"
+elif args.min_size:
+    mode = "MinSizeRel"
+elif args.dsym:
+    mode = "RelWithDebInfo"
+
+filepath = f".cache/bin/{mode}/{args.executable}"
+
+file_permissions = None
+
+if not os.path.exists(filepath):
+    print(f"\x1b[105;30m WARN \x1b[0m Could not find '{args.executable}' on '{mode}' mode: Searching on 'Debug' mode")
+
+    mode = "Debug"
+    filepath = f".cache/bin/Debug/{args.executable}"
+
+try:
+    file_permissions = os.stat(filepath)
+except:
+    sys.exit(f"\x1b[41;37m ERROR \x1b[0m Could not find executable '{args.executable}'")
+
+print(f"\x1b[36mINFO:\x1b[0m Found '{args.executable}' on '{mode}' mode.\n")
+
+result = subprocess.run([ filepath, *args.exec_args ], capture_output = True, text = True)
+
+if result.stdout:
+    sys.stdout.write(result.stdout)
+if result.stderr:
+    sys.stderr.write(result.stderr)
+
+if result.returncode:
+    sys.exit(result.returncode)
+else:
+    sys.exit(0)
