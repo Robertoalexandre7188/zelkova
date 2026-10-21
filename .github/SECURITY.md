@@ -16,7 +16,7 @@ Security fixes are provided for the following versions:
 Instead, report them privately using one of these methods:
  
 - Use GitHub's **"Report a vulnerability"** button in the [Security tab](../../security/advisories/new) of this repository
-- Or email [minchoste@gmail.com]
+- Or email minchoste+security@gmail.com
 
 Please include as much of the following information as you can:
  
