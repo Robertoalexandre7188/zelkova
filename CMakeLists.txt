@@ -25,7 +25,7 @@ else()
 	message(FATAL_ERROR "Could not fetch project version")
 endif()
 
-####
+#############################################################################################################
 
 project(zelkova
 	LANGUAGES C
@@ -33,9 +33,19 @@ project(zelkova
 	DESCRIPTION "A lightweight build system focused on integration with C and native dependency manageament"
 )
 
+include(GNUInstallDirs)
+
 add_compile_definitions(
 	MAJOR="${PROJECT_MAJOR_VERSION}"
 	MINOR="${PROJECT_MINOR_VERSION}"
 	PATCH="${PROJECT_PATCH_VERSION}"
 	IS_PRERELEASE="${IS_PRERELEASE}"
+)
+
+if(IS_PRERELEASE)
+	add_compile_definitions(PRERELEASE_VERSION="${PROJECT_PRERELEASE_VERSION}")
+endif()
+
+add_executable(${PROJECT_NAME}
+	src/main.cpp
 )
