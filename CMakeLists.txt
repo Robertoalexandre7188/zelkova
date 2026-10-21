@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.31)
 
 execute_process(
-	COMMAND git describe --tags --always --dirty
+	COMMAND git describe --tags --always --abbrev=0
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	OUTPUT_VARIABLE PROJECT_FULL_VERSION
 	OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -47,5 +47,9 @@ if(IS_PRERELEASE)
 endif()
 
 add_executable(${PROJECT_NAME}
-	src/main.cpp
+	src/main.c
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_BINDIR}
 )
