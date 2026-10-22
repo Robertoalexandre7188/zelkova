@@ -44,16 +44,17 @@ elif args.min_size:
 elif args.dsym:
     mode = "RelWithDebInfo"
 
-filepath = f".cache/bin/{mode}/{args.executable}"
+exec = lambda mode, executable: f".cache/bin/{mode}/{executable}" + (".exe" if sys.platform == "win32" else "")
 
-file_permissions = None
+filepath = exec(mode, args.executable) 
 
 if not os.path.exists(filepath):
     print(f"\x1b[105;30m WARN \x1b[0m Could not find '{args.executable}' on '{mode}' mode: Searching on 'Debug' mode")
 
     mode = "Debug"
-    filepath = f".cache/bin/Debug/{args.executable}"
+    filepath = exec(mode, args.executable)
 
+file_permissions = None
 try:
     file_permissions = os.stat(filepath)
 except:
