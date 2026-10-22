@@ -35,12 +35,16 @@ project(zelkova
 
 include(GNUInstallDirs)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_compile_definitions(
 	MAJOR="${PROJECT_MAJOR_VERSION}"
 	MINOR="${PROJECT_MINOR_VERSION}"
 	PATCH="${PROJECT_PATCH_VERSION}"
 	IS_PRERELEASE="${IS_PRERELEASE}"
 )
+
+include_directories(BEFORE include)
 
 if(IS_PRERELEASE)
 	add_compile_definitions(PRERELEASE_VERSION="${PROJECT_PRERELEASE_VERSION}")
