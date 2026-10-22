@@ -114,3 +114,17 @@ zelkova_status parse_uint64(uint64_t *output, const char *string);
  * <placeholder>
  */
 zelkova_status parse_int64(int64_t *output, const char *string);
+
+/**
+ * @param output <placeholder>
+ * @param string <placeholder>
+ * @return
+ * The status code of the parsing operation. Any value other than `ZELKOVA_OK` imples an error.
+ *
+ * @brief
+ * <placeholder>
+ *
+ * @detail
+ * <placeholder>
+ */
+zelkova_status parse_float(float *output, const char *string);

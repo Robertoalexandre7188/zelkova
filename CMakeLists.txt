@@ -52,6 +52,7 @@ endif()
 
 add_executable(${PROJECT_NAME}
 	src/main.c
+	src/io/parsing.c
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
