@@ -1,4 +1,4 @@
-#include "zelkova.h"
+#include <zelkova.h>
 #include <io/parsing.h>
 
 #include <string.h>
@@ -15,17 +15,16 @@ zelkova_status parse_uint8(uint8_t *output, const char *string){
     uint16_t aux = 0;
 
     for(uint8_t i = 0; i < strsize; ++i){
-        aux = 10*aux + (string[i] - '0');
-        *output = aux;
+        aux = 10*aux + (uint16_t)(string[i] - '0');
 
-        if(aux > *output){
-            *output = 0;
+        if(aux > (uint8_t)aux){
             return IO_PARSE_OVERFLOW;
         }
     }
 
+	*output = (uint8_t)aux;
     return OK;
-};
+}
 
 zelkova_status parse_int8(int8_t *output, const char *string){
     if(output == NULL) return NULL_OUTPUT;
@@ -39,25 +38,23 @@ zelkova_status parse_int8(int8_t *output, const char *string){
 
     if(*string == '-'){
         for(uint8_t i = 1; i < strsize; ++i){
-            aux = 10*aux - (string[i] - '0');
-            *output = aux;
+            aux = 10*aux - (int16_t)(string[i] - '0');
 
-            if(aux < *output){
-                *output = 0;
+            if(aux < (int8_t)aux){
                 return IO_PARSE_UNDERFLOW;
             }
         }
     } else {
         for(uint8_t i = 0; i < strsize; ++i){
-            aux = 10*aux + (string[i] - '0');
-            *output = aux;
+            aux = 10*aux + (int16_t)(string[i] - '0');
 
-            if(aux > *output){
-                *output = 0;
+            if(aux > (int8_t)aux){
                 return IO_PARSE_OVERFLOW;
             }
         }
     }
 
+	*output = (int8_t)aux;
+
     return OK;
-};
+}
