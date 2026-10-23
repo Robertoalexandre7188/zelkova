@@ -114,3 +114,60 @@ zelkova_status parse_int16(int16_t *output, const char *string){
 
 	return OK;
 }
+
+zelkova_status parse_uint32(uint32_t *output, const char *string){
+    if(output == NULL) return NULL_OUTPUT;
+
+    *output = 0;
+
+    if(string == NULL) return OK;
+    if(*string == '-') return IO_PARSE_UNDERFLOW;
+
+    uint64_t strsize = strnlen(string, 10);
+    uint64_t aux = 0;
+
+    for(uint8_t i = 0; i < strsize; ++i){
+        aux = 10*aux + (uint64_t)(string[i] - '0');
+
+        if(aux > (uint32_t)aux){
+            return IO_PARSE_OVERFLOW;
+        }
+    }
+
+	*output = (uint32_t)aux;
+
+    return OK;
+}
+
+zelkova_status parse_int32(int32_t *output, const char *string){
+    if(output == NULL) return NULL_OUTPUT;
+
+    *output = 0;
+
+    if(string == NULL) return OK;
+
+    uint64_t strsize = strnlen(string, 11);
+    int64_t aux = 0;
+
+    if(*string == '-'){
+        for(uint8_t i = 1; i < strsize; ++i){
+            aux = 10*aux - (int64_t)(string[i] - '0');
+
+            if(aux < (int32_t)aux){
+                return IO_PARSE_UNDERFLOW;
+            }
+        }
+    } else {
+        for(uint8_t i = 0; i < strsize; ++i){
+            aux = 10*aux + (int64_t)(string[i] - '0');
+
+            if(aux > (int32_t)aux){
+                return IO_PARSE_OVERFLOW;
+            }
+        }
+    }
+
+	*output = (int32_t)aux;
+
+	return OK;
+}
