@@ -31,13 +31,19 @@ typedef enum zelkova_status {
 
 	/**
 	 * @brief
-	 * when an i/o parsing operation tries to parse an integer/float above the expected numeric limit.
+	 * When an I/O parsing operation tries to parse an integer/float above the expected numeric limit.
 	 */
 	IO_PARSE_OVERFLOW = 100,
 
 	/**
 	 * @brief
-	 * when an i/o parsing operation tries to parse an integer/float below the expected numeric limit.
+	 * When an I/O parsing operation tries to parse an integer/float below the expected numeric limit.
 	 */
 	IO_PARSE_UNDERFLOW = 101,
+
+	/**
+	 * @brief
+	 * When an I/O parsing operation tries to parse a string outside of the expected format.
+	 */
+	IO_PARSE_INVALID_FORMAT = 102
 } zelkova_status;

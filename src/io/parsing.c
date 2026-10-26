@@ -2,6 +2,8 @@
 #include <io/parsing.h>
 
 #include <string.h>
+#include <float.h>
+#include <math.h>
 
 zelkova_status parse_uint8(uint8_t *output, const char *string){
     if(output == NULL) return NULL_OUTPUT;
@@ -228,6 +230,58 @@ zelkova_status parse_int64(int64_t *output, const char *string){
     }
 
 	*output = aux;
+
+	return OK;
+}
+
+zelkova_status parse_float(float *output, const char *string){
+	if(output == NULL) return NULL_OUTPUT;
+
+	*output = 0;
+
+	if(string == NULL) return OK;
+
+	uint64_t strsize = strnlen(string, 64);
+	uint8_t max_exp = 0, is_neg = 0;
+
+	if(*string == '-'){
+		string += 1;
+		strsize -= 1;
+		is_neg = 1;
+	};
+
+	while(max_exp < strsize && string[max_exp] != '.'){
+		++max_exp;
+	};
+
+	double aux = 0.0;
+	for(uint8_t i = 0; i < max_exp; ++i){
+		if(string[i] - '0' < 0 || string[i] - '0' > 9){
+			return IO_PARSE_INVALID_FORMAT;
+		};
+
+		aux = 10*aux + (string[i] - '0');
+
+		if(aux - (float)aux > 0.1)
+			return is_neg ? IO_PARSE_UNDERFLOW : IO_PARSE_OVERFLOW;
+	};
+
+	float factor = 0.1f; 
+	for(uint8_t i = max_exp + 1; i < strsize; ++i){
+		if(string[i] - '0' < 0 || string[i] - '0' > 9){
+			return IO_PARSE_INVALID_FORMAT;
+		};
+
+		aux += (string[i] - '0') * factor;
+		factor *= 0.1f;
+
+		// Arbitrary value chosen, since both under and overflow would have a very major difference between the two numbers being compared,
+		// so what matters is that they are either equal or different
+		if(aux - (float)aux > 1)
+			return is_neg ? IO_PARSE_UNDERFLOW : IO_PARSE_OVERFLOW;
+	};
+
+	*output = (float)(is_neg ? -aux : aux);
 
 	return OK;
 }
