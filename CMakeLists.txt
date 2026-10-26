@@ -35,6 +35,8 @@ project(zelkova
 
 include(GNUInstallDirs)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_compile_definitions(
 	MAJOR="${PROJECT_MAJOR_VERSION}"
 	MINOR="${PROJECT_MINOR_VERSION}"
@@ -42,12 +44,15 @@ add_compile_definitions(
 	IS_PRERELEASE="${IS_PRERELEASE}"
 )
 
+include_directories(BEFORE include)
+
 if(IS_PRERELEASE)
 	add_compile_definitions(PRERELEASE_VERSION="${PROJECT_PRERELEASE_VERSION}")
 endif()
 
 add_executable(${PROJECT_NAME}
 	src/main.c
+	src/io/parsing.c
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

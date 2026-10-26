@@ -1,7 +1,9 @@
-#include <stdio.h>
+#include <io/parsing.h>
 
 int main(int argc, char **argv){
-	printf("Argument: %s\n", argv[1]);
+	uint8_t a;
 
-	return 1;
+	io_parse_status f = parse_uint8(&a, argv[1]);
+
+	return 0;
 }
