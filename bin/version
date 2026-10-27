@@ -79,9 +79,9 @@ else:
 
 current_version = f"v{current_version["major"]}.{current_version["minor"]}.{current_version["patch"]}{prerelease}"
 
-operation = subprocess.run([ "git", "tag", current_version ], capture_output = True)
+operation = subprocess.run([ "git", "tag", current_version, "-m", f"Started the development of version {current_version}" ], capture_output = True)
 
 if operation.returncode:
     sys.exit(f"\x1b[41;37m ERROR \x1b[0m Failed to update project {args.command} version: {operation.stderr}")
 else:
-    print(f"\x1b[43m SUCCESS \x1b[0m Successfully updated project {args.command} version")
+    print(f"\x1b[42m SUCCESS \x1b[0m Successfully updated project {args.command} version")
