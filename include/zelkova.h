@@ -2,7 +2,7 @@
 
 /**
  * @brief
- * <placeholder>
+ * Contains the error codes used throught the application.
  */
 typedef enum zelkova_status {
 	/**
@@ -47,3 +47,5 @@ typedef enum zelkova_status {
 	 */
 	IO_PARSE_INVALID_FORMAT = 102
 } zelkova_status;
+
+extern const char *cli_aliases[];
