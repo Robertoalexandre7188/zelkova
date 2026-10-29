@@ -23,13 +23,15 @@ typedef struct option {
  * Parses an option string to a `struct option`. Accepts both long options and short options (nominated as aliases)
  *
  * @details
- * An option string is any string preffixed with '--'.
+ * An option string is any string preffixed with `--`.
  *
- * `aliases` is a null-terminated list which should contain null-terminated strings on the format "<letter>=<option>".
- * `<letter>` represents an ASCI character that will be interpreted as `<option>`, in case it is preffixed with '-', while parsing.
+ * `aliases` is a null-terminated list which should contain null-terminated strings on the format `<letter>=<option>`.
+ * `<letter>` represents an ASCI character that will be interpreted as `<option>`, in case it is preffixed with `-`, while parsing.
  *
- * The option may be suffixed with '=<argument-1>[,<argument-2>]', in which case `<argument-1>`, `<argument-2>`, etc. are taken as the option's
+ * The option may be suffixed with `=<argument-1>[,<argument-2>[,<argument-3>[,...]]]`, in which case `<argument-1>`, `<argument-2>`, etc. are taken as the option's
  * value(s). Otherwise, the string pointed by `string` is stored, with `string` being incremented until its value points to another option or
  * alias.
  */
 zelkova_status parse_option(option *output, char **argv, uint8_t min_args, uint8_t max_args, const char **aliases);
+
+const char *get_option_name(const char *string, const char **aliases);
